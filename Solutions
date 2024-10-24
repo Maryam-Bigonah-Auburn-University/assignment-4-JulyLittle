@@ -1,0 +1,366 @@
+//Prompt 1
+#include <iostream>
+#include <iomanip>
+
+class GasPump {
+private:
+    double cost_per_gallon;
+    double amount_dispensed;
+    double total_charged;
+    const double dispensing_rate = 0.10; // gallons per second
+
+public:
+    GasPump() : cost_per_gallon(0.0), amount_dispensed(0.0), total_charged(0.0) {}
+
+    void setCostPerGallon(double cost) {
+        cost_per_gallon = cost;
+    }
+
+    double getCostPerGallon() const {
+        return cost_per_gallon;
+    }
+
+    void pumpGas(int seconds) {
+        amount_dispensed += dispensing_rate * seconds;
+        total_charged = amount_dispensed * cost_per_gallon;
+    }
+
+    double getAmountDispensed() const {
+        return amount_dispensed;
+    }
+
+    double getTotalCharged() const {
+        return total_charged;
+    }
+
+    void reset() {
+        amount_dispensed = 0.0;
+        total_charged = 0.0;
+    }
+};
+
+int main() {
+    GasPump pump;
+
+    // Get cost per gallon from user
+    double cost_per_gallon;
+    std::cout << "Enter the cost per gallon of gas: $";
+    std::cin >> cost_per_gallon;
+    pump.setCostPerGallon(cost_per_gallon);
+
+    // Get time for pumping gas from user
+    int seconds;
+    std::cout << "Enter the number of seconds you want to pump gas for: ";
+    std::cin >> seconds;
+    
+    // Pump gas
+    pump.pumpGas(seconds);
+
+    // Display results
+    std::cout << std::fixed << std::setprecision(2);
+    std::cout << "\nGallons of gas dispensed: " << pump.getAmountDispensed() << " gallons" << std::endl;
+    std::cout << "Cost per gallon: $" << pump.getCostPerGallon() << std::endl;
+    std::cout << "Total cost: $" << pump.getTotalCharged() << std::endl;
+
+    // Reset for next usage
+    pump.reset();
+
+    return 0;
+}
+
+//Prompt 2
+#include <iostream>
+#include <iomanip>
+
+class Temperature {
+private:
+    double kelvin;
+    double celsius;
+    double fahrenheit;
+
+public:
+    // Constructor
+    Temperature() : kelvin(0.0), celsius(0.0), fahrenheit(0.0) {}
+
+    // Mutator for Kelvin
+    void setKelvin(double k) {
+        kelvin = k;
+        // Update Celsius and Fahrenheit when Kelvin is set
+        celsius = kelvin - 273.15;
+        fahrenheit = (celsius * 9.0 / 5.0) + 32;
+    }
+
+    // Accessor for Kelvin
+    double getKelvin() const {
+        return kelvin;
+    }
+
+    // Accessor for Celsius
+    double getCelsius() const {
+        return celsius;
+    }
+
+    // Accessor for Fahrenheit
+    double getFahrenheit() const {
+        return fahrenheit;
+    }
+};
+
+int main() {
+    Temperature temp;
+
+    // Prompt user for temperature in Kelvin
+    double kelvin;
+    std::cout << "Enter temperature in degrees Kelvin: ";
+    std::cin >> kelvin;
+
+    // Set the temperature in Kelvin
+    temp.setKelvin(kelvin);
+
+    // Display the converted temperatures
+    std::cout << std::fixed << std::setprecision(2);
+    std::cout <<"Temperature in Celsius: " << temp.getCelsius() << " " << std::endl;
+    std::cout <<"Temperature in Fahrenheit: " << temp.getFahrenheit() << " " << std::endl;
+
+    return 0;
+}
+
+//Prompt 3
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+
+class Player {
+private:
+    std::string name;
+    int score;
+
+public:
+    // Constructor
+    Player(const std::string& name, int score) : name(name), score(score) {}
+
+    // Accessor methods
+    std::string getName() const {
+        return name;
+    }
+
+    int getScore() const {
+        return score;
+    }
+};
+
+class PlayerManager {
+private:
+    std::vector<Player> players;
+
+public:
+    // Add a new player
+    bool addPlayer(const std::string& name, int score) {
+        if (players.size() < 10) {
+            players.emplace_back(name, score);
+            return true;
+        }
+        return false; // Player list is full
+    }
+
+    // Print all players and their scores
+    void printPlayers() const {
+        if (players.empty()) {
+            std::cout << "No players available." << std::endl;
+            return;
+        }
+
+        for (const auto& player : players) {
+            std::cout << "Player: " << player.getName() << ", Score: " << player.getScore() << std::endl;
+        }
+    }
+
+    // Get the score of a player
+    void getPlayerScore(const std::string& name) const {
+        auto it = std::find_if(players.begin(), players.end(), [&name](const Player& player) {
+            return player.getName() == name;
+        });
+
+        if (it != players.end()) {
+            std::cout << "Score of " << name << ": " << it->getScore() << std::endl;
+        } else {
+            std::cout << "Player " << name << " not found." << std::endl;
+        }
+    }
+
+    // Remove a player
+    void removePlayer(const std::string& name) {
+        auto it = std::remove_if(players.begin(), players.end(), [&name](const Player& player) {
+            return player.getName() == name;
+        });
+
+        if (it != players.end()) {
+            players.erase(it, players.end());
+            std::cout << "Player " << name << " removed." << std::endl;
+        } else {
+            std::cout << "Player " << name << " not found." << std::endl;
+        }
+    }
+};
+
+int main() {
+    PlayerManager playerManager;
+    std::string name;
+    int score, choice;
+
+    do {
+        std::cout << "\nPlayer Management Menu:\n";
+        std::cout << "1. Add Player\n";
+        std::cout << "2. Print Players\n";
+        std::cout << "3. Get Player Score\n";
+        std::cout << "4. Remove Player\n";
+        std::cout << "5. Exit\n";
+        std::cout << "Choose an option: ";
+        std::cin >> choice;
+
+        switch (choice) {
+            case 1:
+                if (playerManager.addPlayer(name, score)) {
+                    std::cout << "Enter player name: ";
+                    std::cin >> name;
+                    std::cout << "Enter player score: ";
+                    std::cin >> score;
+                } else {
+                    std::cout << "Player list is full." << std::endl;
+                }
+                break;
+
+            case 2:
+                playerManager.printPlayers();
+                break;
+
+            case 3:
+                std::cout << "Enter player name: ";
+                std::cin >> name;
+                playerManager.getPlayerScore(name);
+                break;
+
+            case 4:
+                std::cout << "Enter player name to remove: ";
+                std::cin >> name;
+                playerManager.removePlayer(name);
+                break;
+
+            case 5:
+                std::cout << "Exiting program." << std::endl;
+                break;
+
+            default:
+                std::cout << "Invalid choice. Please try again." << std::endl;
+        }
+    } while (choice != 5);
+
+    return 0;
+}
+
+//Prompt 4
+#include <iostream>
+#include <cstring>
+
+class Month {
+private:
+    int month; // 1 = January, 2 = February, ..., 12 = December
+
+public:
+    // Default constructor
+    Month() : month(1) {} // Default to January
+
+    // Constructor to set month using first 3 letters
+    Month(const char* monthName) {
+        setMonth(monthName);
+    }
+
+    // Constructor to set month using int value
+    Month(int m) {
+        setMonth(m);
+    }
+
+    // Input function from first 3 letters of month name
+    void inputFromMonthName() {
+        char monthName[4];
+        std::cout << "Enter the month (first 3 letters): ";
+        std::cin >> monthName;
+        setMonth(monthName);
+    }
+
+    // Input function from int value
+    void inputFromInt() {
+        int m;
+        std::cout << "Enter the month as a number (1-12): ";
+        std::cin >> m;
+        setMonth(m);
+    }
+
+    // Output function that outputs the month as first 3 letters
+    void outputAsName() const {
+        const char* monthNames[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                                     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        std::cout << "Month: " << monthNames[month - 1] << std::endl;
+    }
+
+    // Output function that outputs the month as number
+    void outputAsNumber() const {
+        std::cout << "Month number: " << month << std::endl;
+    }
+
+    // Function to return the next month as a new Month object
+    Month getNextMonth() const {
+        return Month((month % 12) + 1); // Wrap around to January after December
+    }
+
+private:
+    // Private method to set the month using int value
+    void setMonth(int m) {
+        if (m >= 1 && m <= 12) {
+            month = m;
+        } else {
+            month = 1; // Default to January if invalid
+        }
+    }
+
+    // Private method to set the month using first 3 letters
+    void setMonth(const char* monthName) {
+        const char* monthNames[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                                     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        for (int i = 0; i < 12; ++i) {
+            if (strcasecmp(monthName, monthNames[i]) == 0) {
+                month = i + 1; // Set month from 1 to 12
+                return;
+            }
+        }
+        month = 1; // Default to January if invalid
+    }
+};
+
+int main() {
+    Month m;
+
+    // Test default constructor
+    std::cout << "Default month: ";
+    m.outputAsName();
+    m.outputAsNumber();
+
+    // Test input from month name
+    m.inputFromMonthName();
+    m.outputAsName();
+    m.outputAsNumber();
+
+    // Test input from integer
+    m.inputFromInt();
+    m.outputAsName();
+    m.outputAsNumber();
+
+    // Get next month
+    Month nextMonth = m.getNextMonth();
+    std::cout << "Next month: ";
+    nextMonth.outputAsName();
+    nextMonth.outputAsNumber();
+
+    return 0;
+}
